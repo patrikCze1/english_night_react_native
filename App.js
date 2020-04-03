@@ -14,9 +14,9 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
 //import GameListItem from './components/games/GameListItem';
-import Home from './components/Home';
 import Camera from './components/Camera';
 import Game from './models/Game';
+import Task from './models/Task';
 
 import GamesScreen from './screens/GamesScreen';
 import GameDetailScreen from './screens/GameDetailScreen';
@@ -24,25 +24,44 @@ import TaskDetailScreen from './screens/TaskDetailScreen';
 import NewTaskScreen from './screens/NewTaskScreen';
 import NewGameScreen from './screens/NewGameScreen';
 
+import firestore from '@react-native-firebase/firestore';
+
 const Stack = createStackNavigator();
 
 class App extends Component {
   state = {
     games: [
-      new Game(1,'hra', 'dneska'),
-      new Game(2,'hra2', 'zitra'),
-      new Game(3,'hra3', 'vcera'),
-      new Game(4,'hra4', 'vcera'),
+      new Game(1,'hra', 1585923152938),
+      new Game(2,'hra2', 1585923152938),
+      new Game(3,'hra3', 1585925536827),
+    ],
+    tasks: [
+      new Task(1, 2, 'vypij pivo', {longitude: -122.45194179178512, latitude: 37.78317882579094}, false),
+      new Task(2, 2, 'vypij 1 pivo', {longitude: -122.45194179178512, latitude: 37.78317882579094}, true),
+      new Task(3, 2, 'vypij 2 panaky', {longitude: -122.45194179178512, latitude: 37.78317882579094}, true),
     ],
   }
 
-  saveGame = (game) => {
+  async getGames() {
+    const gamesCollection = await firestore().collection('Games').doc('gameId').get();;
+
+    console.log('collection: '+gamesCollection);
+  }
+
+  saveGame = (name, time) => {
     console.log('new game')
     let newList = this.state.games;
     //newList = [...newList, new Game(5, game, 'zitra')];
-    newList.push(new Game(5, game, 'zitra'))
-    console.log(newList)
+    newList.push(new Game(5,  name, time));
+    console.log(newList);
     this.setState({games: newList})
+  }
+
+  saveTask = (gameId, title, coordinates) => {
+    let tasks = this.state.tasks;
+    tasks.push(new Task(6, gameId, title, coordinates.coordinate));
+    this.setState({tasks});
+    console.log(this.state.tasks);
   }
 
   render() {
@@ -74,7 +93,7 @@ class App extends Component {
             component={NewGameScreen} 
             initialParams={{saveGame: this.saveGame}}
             options={({navigation}) => ({
-              title: 'New task',
+              title: 'New game',
               /*headerRight: () => (
                 <Button onPress={() => navigation.goBack()} title="Save" />
               ),*/
@@ -83,33 +102,22 @@ class App extends Component {
           <Stack.Screen 
             name="GameDetail" 
             component={GameDetailScreen} 
-            options={({navigation}) => ({
-              headerRight: () => (
-                <Button
-                  onPress={() => navigation.navigate('NewTask')}
-                  title="Add task"
-                />
-              ),
-            })}
+            initialParams={{tasks: this.state.tasks}}
           />
           <Stack.Screen 
             name="TaskDetail" 
             component={TaskDetailScreen} 
-            options={{title: 'Task info'}}
+            options={{title: 'Task location'}}
           />
           <Stack.Screen 
             name="NewTask" 
             component={NewTaskScreen} 
+            initialParams={{saveTask: this.saveTask}}
             options={{
               title: 'New task',
-              headerRight: () => (
-                <Button
-                  onPress={() => alert('save')}
-                  title="Add task"
-                />
-              ),
             }}
           />
+          
           <Stack.Screen 
             name="Camera" 
             component={Camera} 

@@ -3,30 +3,21 @@ import {
   StyleSheet,
   View,
   Text,
-  FlatList,
+  TouchableHighlight,
   Image,
   TouchableOpacity,
+  Button,
 } from 'react-native';
 import { SwipeListView } from 'react-native-swipe-list-view';
 
 import TaskListItem from '../components/tasks/TaskListItem';
 
-import Task from '../models/Task';
+import Tasks from '../components/tasks/Tasks';
 
 class GameDetailScreen extends Component {
-  static navigationOptions = () => ({
-    title: 'asd',
-  })
-
   state = {
-    gameId: '1',
-    tasks: [
-      new Task(1, 2, 'vypij pivo', 'hradec', true),
-      new Task(2, 2, 'vypij 1 pivo', 'hradec', true),
-      new Task(3, 2, 'vypij 2 panaky', 'hradec', true),
-      new Task(4, 2, 'vypij pivo', 'hradec', false),
-      new Task(5, 2, 'vypij pivo', 'hradec', false),
-    ],
+    gameId: '',
+    tasks: [],
   };
 
   deleteTask = id => {
@@ -40,63 +31,50 @@ class GameDetailScreen extends Component {
   }
 
   componentDidMount() {
-    this.props.navigation.setParams({title: 'value'})
+    this.props.navigation.setOptions({
+      title: this.props.route.params.game.item.name,
+      headerRight: () => (
+        <Button
+          onPress={() => this.props.navigation.navigate('NewTask', {gameId: this.props.route.params.game.item._id})}
+          title="Add task"
+        />
+      ),
+    })
 
     //todo get tasks...
   }
 
   render() {
     const {_id, _name} = this.props.route.params.game.item;
+    const {tasks} = this.props.route.params;
     const imagePath = require('./images/profile.jpg');
     //console.log(this.state.tasks[0].completed);
-    //console.log(this.props.route.params.game.item);
+    console.log(this.props);
 
     return (
       <View>
-        <Image source={imagePath} style={{height: 300, width: 'auto'}} />
-        <Text>{_name} id: {_id}</Text>
+        <TouchableOpacity onPress={()=> this.props.navigation.navigate('Camera')}>
+          <Image 
+          source={imagePath} 
+          style={{height: 300, width: 'auto'}} 
+          onPress={()=> alert('image clicked')}
+          />
+        </TouchableOpacity>
 
-        <SwipeListView
-          data={this.state.tasks}
-          renderItem={(task, rowMap) => (
-            <TouchableOpacity
-              style={styles.item}
-              onPress={() =>
-                this.props.navigation.navigate('TaskDetail', {taskId: task._id})
-              }>
-              <TaskListItem task={task} />
-              
-            </TouchableOpacity>
-          )}
+        <TouchableHighlight onPress={() => alert('image')}>
+          <Text>Btn</Text>
+        </TouchableHighlight>
 
-          renderHiddenItem={ (task, rowMap) => (
-            <View style={styles.backRow}>
-              <View style={{flexDirection:'row', flexWrap:'wrap'}}> 
-                <Text 
-                style={styles.complete}
-                onPress={() => this.completeTask(task.item._id)}
-                >
-                  {task.item._completed ? 'uncompleted' : 'Complete'}
-                  </Text>
-
-                <Text 
-                style={styles.delete}
-                onPress={() => this.deleteTask(task.item._id)}
-                >
-                  Delete
-                </Text>
-              </View>
-                
-            </View>
-        )}
-          rightOpenValue={-160}
-        />
+        <Tasks />
       </View>
     );
   }
 }
-
+//todo list zobrazeni az dolu
 const styles = StyleSheet.create({
+  list: {
+    height: 450
+  },
   item: {
     padding: 15,
     margin: 10,

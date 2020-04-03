@@ -1,31 +1,23 @@
-import React, {Component} from 'react';
-import {StyleSheet, View, Text, FlatList, Button, TouchableOpacity} from 'react-native'
+import React from 'react';
+import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
 
 import GameListItem from '../components/games/GameListItem';
 
+import Users from '../components/Users';
+
 const GamesScreen = (props) => {
-  console.log(props);
   return (
     <View style={styles.body}>
       <View style={styles.container}>
         <View style={styles.games}>
-          <FlatList 
-          extraData={props}
-          data={props.route.params.games} renderItem={(game) => (
-            <TouchableOpacity style={styles.item} onPress={() => 
-                props.navigation.navigate('GameDetail', {game: game})} >
-              <GameListItem game={game} />
-            </TouchableOpacity>
-            )
-          } />
+          <Users />
         </View>
       </View>
     </View>
   );
 }
 
-
-const styles = {
+const styles = StyleSheet.create({
   item: {
     padding: 15,
     margin: 10,
@@ -34,12 +26,16 @@ const styles = {
     borderRadius: 4,
   },
   body: {
-    color: 'black',
   },
-  container: {},
+  container: {
+
+  },
   games: {
-    height: 'auto'
+    
   },
-};
+  list: {
+    
+  }
+});
 
 export default GamesScreen;
