@@ -1,18 +1,18 @@
 import React, {useEffect, useState} from 'react';
 import {
   ActivityIndicator,
-  FlatList,
   StyleSheet,
   TouchableOpacity,
   View,
-  Text
+  Text,
+  TouchableHighlight
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
-import { SwipeListView } from 'react-native-swipe-list-view';
+import {SwipeListView} from 'react-native-swipe-list-view';
 import TaskListItem from './TaskListItem';
 
-function Tasks() {
+const Tasks = (props) => {
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState([]);
 
@@ -21,10 +21,11 @@ function Tasks() {
   useEffect(() => {
     const subscriber = firestore()
       .collection('Tasks')
-      .onSnapshot(querySnapshot => {
+      .where('gameId', '==', props.gameId)
+      .onSnapshot((querySnapshot) => {
         const tasks = [];
 
-        querySnapshot.forEach(documentSnapshot => {
+        querySnapshot.forEach((documentSnapshot) => {
           tasks.push({
             ...documentSnapshot.data(),
             key: documentSnapshot.id,
@@ -39,74 +40,90 @@ function Tasks() {
     return () => subscriber();
   }, []);
 
+  async function toggleComplete(taskId, isCompleted) {
+    await firestore()
+      .collection('Tasks')
+      .doc(taskId)
+      .update({
+        completed: !isCompleted,
+      });
+  }
+
+  async function deleteTask(taskId) {
+    await firestore()
+      .collection('Tasks')
+      .doc(taskId)
+      .delete();
+  }
+
   if (loading) {
     return <ActivityIndicator />;
   }
 
-  //console.log(tasks);
   return (
     <SwipeListView
       style={styles.list}
       data={tasks}
       renderItem={(task, rowMap) => (
-        <TouchableOpacity
+        <TouchableHighlight
           style={styles.item}
           onPress={() =>
             navigation.navigate('TaskDetail', {coordinates: task.item.position})
           }>
-              
           <TaskListItem task={task.item} />
-        </TouchableOpacity>
+        </TouchableHighlight>
       )}
+
       renderHiddenItem={(task, rowMap) => (
         <View style={styles.backRow}>
           <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
-            <Text
-              style={styles.complete}
-              onPress={() => this.completeTask(task.item.key)}>
-              {task.item._completed ? 'uncompleted' : 'Complete'}
-            </Text>
+            <TouchableOpacity
+              onPress={() => toggleComplete(task.item.key, task.item.completed)}>
+              <Text style={styles.complete}>
+                {task.item.completed ? 'uncompleted' : 'Complete'}
+              </Text>
+            </TouchableOpacity>
 
-            <Text
-              style={styles.delete}
-              onPress={() => this.deleteTask(task.item.key)}>
-              Delete
-            </Text>
+            <TouchableOpacity
+              onPress={() => deleteTask(task.item.key)}>
+              <Text style={styles.delete}>Delete</Text>
+            </TouchableOpacity>
           </View>
         </View>
       )}
       rightOpenValue={-160}
     />
   );
-}
+};
 
 const styles = StyleSheet.create({
-    list: {
-      height: 450
-    },
-    item: {
-      padding: 15,
-      margin: 10,
-      justifyContent: 'center',
-      backgroundColor: 'green',
-      borderRadius: 4,
-    },
-    backRow: {
-      alignItems: 'flex-end',
-    },
-    complete: {
-      backgroundColor: 'blue',
-      color: 'white',
-      justifyContent: 'center',
-      width: 80,
-      height: 80,
-    },
-    delete: {
-      backgroundColor: 'red',
-      color: 'white',
-      textAlign: 'center',
-      width: 80,
-    },
-  });
+  list: {
+    height: 450,
+  },
+  item: {
+    padding: 15,
+    margin: 0,
+    justifyContent: 'center',
+    backgroundColor: 'green',
+    borderBottomWidth: 1,
+    borderColor: 'gray',
+  },
+  backRow: {
+    alignItems: 'flex-end',
+  },
+  complete: {
+    backgroundColor: 'blue',
+    color: 'white',
+    justifyContent: 'center',
+    width: 80,
+    height: 80,
+  },
+  delete: {
+    backgroundColor: 'red',
+    color: 'white',
+    textAlign: 'center',
+    width: 80,
+  },
+});
 
 export default Tasks;

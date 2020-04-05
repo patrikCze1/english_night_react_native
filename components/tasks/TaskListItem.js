@@ -1,8 +1,7 @@
 import React from 'react';
-import {StyleSheet, TouchableOpacity, Text, View, Button} from 'react-native';
+import {StyleSheet, Text, View} from 'react-native';
 
 const TaskListItem = props => {
-  //console.log(props.task.item.id);
   const {title, position, completed, key} = props.task;
 
   return (

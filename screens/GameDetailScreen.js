@@ -2,15 +2,15 @@ import React, {Component} from 'react';
 import {
   StyleSheet,
   View,
-  Text,
-  TouchableHighlight,
   Image,
   TouchableOpacity,
   Button,
+  ActivityIndicator,
+  Text,
 } from 'react-native';
-import { SwipeListView } from 'react-native-swipe-list-view';
-
-import TaskListItem from '../components/tasks/TaskListItem';
+import firestore from '@react-native-firebase/firestore';
+import storage from '@react-native-firebase/storage';
+import ImagePicker from 'react-native-image-picker';
 
 import Tasks from '../components/tasks/Tasks';
 
@@ -18,54 +18,124 @@ class GameDetailScreen extends Component {
   state = {
     gameId: '',
     tasks: [],
+    imageUrl: '',
+    loading: true,
   };
 
-  deleteTask = id => {
-    console.log('removing task ' + id);
-    //todo 
-  }
-
-  completeTask = id => {
-    console.log('completing task ' + id);
-    //todo 
-  }
-
   componentDidMount() {
+    const {key, image} = this.props.route.params.game.item;
+
+    this.setState({gameId: key, imageUrl: image});
+
     this.props.navigation.setOptions({
       title: this.props.route.params.game.item.name,
       headerRight: () => (
         <Button
-          onPress={() => this.props.navigation.navigate('NewTask', {gameId: this.props.route.params.game.item._id})}
+          onPress={() =>
+            this.props.navigation.navigate('NewTask', {
+              gameId: key,
+            })
+          }
           title="Add task"
         />
       ),
-    })
+    });
+    const path = this.props.route.params.game.item.image;
+    this.getImageUrl(path);
+  }
 
-    //todo get tasks...
+  async getImageUrl(imgPath) {
+    if (!imgPath) imgPath = '/games/default.jpg';
+
+    await storage()
+      .ref(imgPath)
+      .getDownloadURL()
+      .then((res) => {
+        this.setState({imageUrl: res});
+        this.setState({loading: false});
+        console.log(res);
+      })
+      .catch((err) => {
+        this.setState({loading: false});
+        console.log(err);
+      });
+  }
+
+  chooseFile = () => {
+    var options = {
+      title: 'Select Image',
+      storageOptions: {
+        skipBackup: true,
+        path: 'images',
+      },
+    };
+
+    ImagePicker.showImagePicker(options, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else {
+        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
+        
+        this.setState({
+          imageUrl: response.uri,
+        });
+
+        this.saveImage(response.uri);
+      }
+    });
+  };
+
+  async saveImage(path) {//todo zmensit
+    const gameId = this.state.gameId;
+    const newPath = '/games/' + gameId + '.jpg';
+    console.log('new path: ' + newPath)
+    const reference = storage().ref(newPath);
+    await reference.putFile(path);
+    this.updateGame(newPath);
+  }
+
+  async updateGame (newPath) {
+    await firestore()
+    .collection('Games')
+    .doc(this.state.gameId)
+    .update({
+      image: newPath,
+    });
+  }
+
+  async deleteGame () {
+    await firestore()
+    .collection('Games')
+    .doc(this.state.gameId)
+    .delete();
+    
+    this.props.navigation.goBack();
   }
 
   render() {
-    const {_id, _name} = this.props.route.params.game.item;
-    const {tasks} = this.props.route.params;
-    const imagePath = require('./images/profile.jpg');
-    //console.log(this.state.tasks[0].completed);
-    console.log(this.props);
+    const {key} = this.props.route.params.game.item; //id
 
     return (
       <View>
-        <TouchableOpacity onPress={()=> this.props.navigation.navigate('Camera')}>
-          <Image 
-          source={imagePath} 
-          style={{height: 300, width: 'auto'}} 
-          onPress={()=> alert('image clicked')}
-          />
-        </TouchableOpacity>
-
-        <TouchableHighlight onPress={() => alert('image')}>
-          <Text>Btn</Text>
-        </TouchableHighlight>
-
-        <Tasks />
+        {this.state.loading ? (
+          <ActivityIndicator />
+        ) : (
+          <TouchableOpacity>
+            <Image
+              source={{uri: this.state.imageUrl}}
+              style={{height: 300, width: 'auto'}}
+            />
+          </TouchableOpacity>
+        )}
+        <Button title="Choose File" onPress={this.chooseFile.bind(this)} />
+        <Tasks
+          gameId={key}
+          completeTask={this.completeTask}
+          deleteTask={this.deleteTask}
+        />
+        <Button title="Delete" onPress={this.deleteGame.bind(this)} />
       </View>
     );
   }
@@ -73,7 +143,7 @@ class GameDetailScreen extends Component {
 //todo list zobrazeni az dolu
 const styles = StyleSheet.create({
   list: {
-    height: 450
+    height: 400,
   },
   item: {
     padding: 15,

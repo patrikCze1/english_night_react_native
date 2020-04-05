@@ -27,7 +27,6 @@ class NewTaskScreen extends Component {
   onSubmit = () => {
     if (!this.state.title || !this.state.position) {
       alert('Please fill all inputs.');
-      return;
     } else {
       this.props.route.params.saveTask(this.props.route.params.gameId ,this.state.title, this.state.position);
       this.props.navigation.goBack();
@@ -36,10 +35,10 @@ class NewTaskScreen extends Component {
 
   setCoordinates = coordinates => {
     this.setState({position: coordinates});
-    console.log('new coords')
   }
 
   render() {
+    console.log(this.props.route.params)
     return (
       <View>
         <View style={styles.container}>

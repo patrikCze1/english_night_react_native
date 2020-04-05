@@ -3,28 +3,29 @@ import {ActivityIndicator, FlatList, StyleSheet, TouchableOpacity} from 'react-n
 import firestore from '@react-native-firebase/firestore';
 import { useNavigation } from '@react-navigation/native';
 
-import GameListItem from './games/GameListItem';
+import GameListItem from './GameListItem';
 
-function Users() {
+function Games() {
   const [loading, setLoading] = useState(true); // Set loading to true on component mount
-  const [users, setUsers] = useState([]); // Initial empty array of users
+  const [games, setGames] = useState([]); // Initial empty array of games
 
   const navigation = useNavigation();
 
   useEffect(() => {
     const subscriber = firestore()
       .collection('Games')
+      .orderBy('date', 'desc')
       .onSnapshot(querySnapshot => {
-        const users = [];
+        const games = [];
 
         querySnapshot.forEach(documentSnapshot => {
-          users.push({
+          games.push({
             ...documentSnapshot.data(),
             key: documentSnapshot.id,
           });
         });
 
-        setUsers(users);
+        setGames(games);
         setLoading(false);
       });
 
@@ -36,11 +37,9 @@ function Users() {
     return <ActivityIndicator />;
   }
 
-  console.log(users);
   return (
     <FlatList
-      //extraData={props}
-      data={users}
+      data={games}
       renderItem={game => (
         <TouchableOpacity
           style={styles.item}
@@ -66,4 +65,4 @@ const styles = StyleSheet.create({
   list: {},
 });
 
-export default Users;
+export default Games;

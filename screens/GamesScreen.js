@@ -3,14 +3,14 @@ import {View, StyleSheet, FlatList, TouchableOpacity} from 'react-native'
 
 import GameListItem from '../components/games/GameListItem';
 
-import Users from '../components/Users';
+import Games from '../components/games/Games';
 
 const GamesScreen = (props) => {
   return (
     <View style={styles.body}>
       <View style={styles.container}>
         <View style={styles.games}>
-          <Users />
+          <Games />
         </View>
       </View>
     </View>

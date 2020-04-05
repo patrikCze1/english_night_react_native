@@ -9,14 +9,9 @@
 import 'react-native-gesture-handler'; // must be first
 import * as React from 'react';
 import {Component} from 'react';
-import {StyleSheet, View, Text, FlatList, Button} from 'react-native';
+import {StyleSheet, Button} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-
-//import GameListItem from './components/games/GameListItem';
-import Camera from './components/Camera';
-import Game from './models/Game';
-import Task from './models/Task';
 
 import GamesScreen from './screens/GamesScreen';
 import GameDetailScreen from './screens/GameDetailScreen';
@@ -27,41 +22,29 @@ import NewGameScreen from './screens/NewGameScreen';
 import firestore from '@react-native-firebase/firestore';
 
 const Stack = createStackNavigator();
+const tasksRef = firestore().collection('Tasks');
+const gamesRef = firestore().collection('Games');
 
 class App extends Component {
   state = {
-    games: [
-      new Game(1,'hra', 1585923152938),
-      new Game(2,'hra2', 1585923152938),
-      new Game(3,'hra3', 1585925536827),
-    ],
-    tasks: [
-      new Task(1, 2, 'vypij pivo', {longitude: -122.45194179178512, latitude: 37.78317882579094}, false),
-      new Task(2, 2, 'vypij 1 pivo', {longitude: -122.45194179178512, latitude: 37.78317882579094}, true),
-      new Task(3, 2, 'vypij 2 panaky', {longitude: -122.45194179178512, latitude: 37.78317882579094}, true),
-    ],
+    games: [],
   }
 
-  async getGames() {
-    const gamesCollection = await firestore().collection('Games').doc('gameId').get();;
-
-    console.log('collection: '+gamesCollection);
+  async saveGame(name, date) {
+    await gamesRef.add({
+      name: name,
+      image: '/games/default.jpg',
+      date: date,
+    });
   }
-
-  saveGame = (name, time) => {
-    console.log('new game')
-    let newList = this.state.games;
-    //newList = [...newList, new Game(5, game, 'zitra')];
-    newList.push(new Game(5,  name, time));
-    console.log(newList);
-    this.setState({games: newList})
-  }
-
-  saveTask = (gameId, title, coordinates) => {
-    let tasks = this.state.tasks;
-    tasks.push(new Task(6, gameId, title, coordinates.coordinate));
-    this.setState({tasks});
-    console.log(this.state.tasks);
+  
+  async saveTask(gameId, title, coordinates) {
+    await tasksRef.add({
+      gameId: gameId,
+      title: title,
+      position: coordinates.coordinate,
+      completed: false
+    });
   }
 
   render() {
@@ -76,7 +59,7 @@ class App extends Component {
               title: 'Games',
               headerLeft: () => (
                 <Button
-                  onPress={() => navigation.navigate('Camera')}
+                  onPress={() => alert('profile')}
                   title="Profile"
                 />
               ),
@@ -116,12 +99,6 @@ class App extends Component {
             options={{
               title: 'New task',
             }}
-          />
-          
-          <Stack.Screen 
-            name="Camera" 
-            component={Camera} 
-            options={{title: 'Camera'}}
           />
         </Stack.Navigator>
       </NavigationContainer>
