@@ -3,14 +3,27 @@ import {StyleSheet, Text, View} from 'react-native';
 
 const GameListItem = props => {
   const {name, date} = props.game.item;
+  const upcomming = this.isGameUpcomming(date);
 
   return (
-    <View>
-      <Text>{name}</Text>
+    <View style={upcomming? styles.item : styles.inactive}>
+      <Text style={styles.title}>{name}</Text>
       <Text>{getFormatDate(date)}</Text>
     </View>
   );
 };
+
+isGameUpcomming = timestamp => {
+  const date = new Date(timestamp);
+  const today = new Date();
+
+  if (
+    today.getFullYear() <= date.getFullYear() &&
+    (today.getMonth() + 1) <= date.getMonth() &&
+    today.getDate() <= date.getDate()
+  ) { return true;}
+  return false;
+}
 
 getFormatDate = timestamp => {
   const date = new Date(timestamp);
@@ -43,12 +56,22 @@ getFormatDate = timestamp => {
 
 const styles = StyleSheet.create({
   item: {
-    padding: 15,
-    margin: 10,
-    justifyContent: 'center',
-    backgroundColor: 'green',
-    borderRadius: 4,
+    padding: 20,
+    backgroundColor: '#ffffff',
+    borderBottomColor: '#4d4d4d',
+    borderBottomWidth: 0.5,
   },
+  inactive: {
+    padding: 20,
+    borderBottomColor: '#4d4d4d',
+    borderBottomWidth: 0.5,
+    backgroundColor: '#ffffff',
+    opacity: 0.4,
+  },
+  title: {
+    fontSize: 20,
+    marginBottom: 10,
+  }
 });
 
 export default GameListItem;

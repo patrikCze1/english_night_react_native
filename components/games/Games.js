@@ -54,10 +54,6 @@ function Games() {
 
 const styles = StyleSheet.create({
   item: {
-    height: 50,
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
   },
   body: {},
   container: {},

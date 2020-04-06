@@ -6,7 +6,6 @@ import {
   TouchableOpacity,
   Button,
   ActivityIndicator,
-  Text,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import storage from '@react-native-firebase/storage';
@@ -75,9 +74,7 @@ class GameDetailScreen extends Component {
         console.log('User cancelled image picker');
       } else if (response.error) {
         console.log('ImagePicker Error: ', response.error);
-      } else {
-        // let source = { uri: 'data:image/jpeg;base64,' + response.data };
-        
+      } else {        
         this.setState({
           imageUrl: response.uri,
         });
@@ -122,20 +119,21 @@ class GameDetailScreen extends Component {
         {this.state.loading ? (
           <ActivityIndicator />
         ) : (
-          <TouchableOpacity>
+          <TouchableOpacity
+          onPress={this.chooseFile.bind(this)}
+          >
             <Image
               source={{uri: this.state.imageUrl}}
               style={{height: 300, width: 'auto'}}
             />
           </TouchableOpacity>
         )}
-        <Button title="Choose File" onPress={this.chooseFile.bind(this)} />
         <Tasks
           gameId={key}
           completeTask={this.completeTask}
           deleteTask={this.deleteTask}
         />
-        <Button title="Delete" onPress={this.deleteGame.bind(this)} />
+        <Button title="Delete" color="#ff0000" titleStyle={styles.deleteBtn} onPress={this.deleteGame.bind(this)} />
       </View>
     );
   }
@@ -144,29 +142,6 @@ class GameDetailScreen extends Component {
 const styles = StyleSheet.create({
   list: {
     height: 400,
-  },
-  item: {
-    padding: 15,
-    margin: 10,
-    justifyContent: 'center',
-    backgroundColor: 'green',
-    borderRadius: 4,
-  },
-  backRow: {
-    alignItems: 'flex-end',
-  },
-  complete: {
-    backgroundColor: 'blue',
-    color: 'white',
-    justifyContent: 'center',
-    width: 80,
-    height: 80,
-  },
-  delete: {
-    backgroundColor: 'red',
-    color: 'white',
-    textAlign: 'center',
-    width: 80,
   },
 });
 

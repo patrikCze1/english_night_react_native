@@ -5,7 +5,8 @@ import {
   TouchableOpacity,
   View,
   Text,
-  TouchableHighlight
+  TouchableHighlight,
+  Image,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
@@ -36,7 +37,6 @@ const Tasks = (props) => {
         setLoading(false);
       });
 
-    // Unsubscribe from events when no longer in use
     return () => subscriber();
   }, []);
 
@@ -66,7 +66,6 @@ const Tasks = (props) => {
       data={tasks}
       renderItem={(task, rowMap) => (
         <TouchableHighlight
-          style={styles.item}
           onPress={() =>
             navigation.navigate('TaskDetail', {coordinates: task.item.position})
           }>
@@ -78,15 +77,20 @@ const Tasks = (props) => {
         <View style={styles.backRow}>
           <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
             <TouchableOpacity
-              onPress={() => toggleComplete(task.item.key, task.item.completed)}>
-              <Text style={styles.complete}>
-                {task.item.completed ? 'uncompleted' : 'Complete'}
-              </Text>
+              onPress={() => toggleComplete(task.item.key, task.item.completed)}
+              style={styles.btn}
+              >
+              <View style={styles.complete}>
+                {task.item.completed ? <Image source={require('./../../static/icons/back32.png')} />  : <Image source={require('./../../static/icons/checkwhite24.png')} style={styles.img}/> }
+              </View>
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => deleteTask(task.item.key)}>
-              <Text style={styles.delete}>Delete</Text>
+              onPress={() => deleteTask(task.item.key)}
+              >
+              <View style={styles.delete}>
+                <Image source={require('./../../static/icons/trash32.png')}/> 
+              </View>
             </TouchableOpacity>
           </View>
         </View>
@@ -98,31 +102,32 @@ const Tasks = (props) => {
 
 const styles = StyleSheet.create({
   list: {
-    height: 450,
-  },
-  item: {
-    padding: 15,
-    margin: 0,
-    justifyContent: 'center',
-    backgroundColor: 'green',
-    borderBottomWidth: 1,
-    borderColor: 'gray',
+    //height: 450,
   },
   backRow: {
     alignItems: 'flex-end',
   },
-  complete: {
-    backgroundColor: 'blue',
-    color: 'white',
+  btn: {
     justifyContent: 'center',
+    alignItems: 'center'
+  },
+  complete: {
+    fontSize: 16,
+    backgroundColor: '#48adfa',
+    color: 'white',
     width: 80,
-    height: 80,
+    height: '100%',
+    alignItems: 'center',
+    paddingVertical: 19,
   },
   delete: {
-    backgroundColor: 'red',
+    fontSize: 16,
+    backgroundColor: '#ff362b',
     color: 'white',
-    textAlign: 'center',
     width: 80,
+    height: '100%',
+    paddingHorizontal: 23,
+    paddingVertical: 15,
   },
 });
 

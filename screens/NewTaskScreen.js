@@ -7,8 +7,8 @@ class NewTaskScreen extends Component {
     title: '',
     position: {
       coordinate: {
-        latitude: 37.78825,
-        longitude: -122.4324,
+        latitude: 50.208709,
+        longitude: 15.832883,
       },
     },
   };
@@ -51,14 +51,17 @@ class NewTaskScreen extends Component {
           />
         </View>
         <View>
-          <Text>Select postion</Text>
-          <ChooseLocation setCoordinates={this.setCoordinates} />
+          <Text style={styles.containerText}>Select postion</Text>
+          <ChooseLocation 
+          style={styles.map} 
+          setCoordinates={this.setCoordinates} 
+          />
         </View>
       </View>
     );
   }
 }
-//todo vetsi mapa
+
 const styles = StyleSheet.create({
   input: {
     marginBottom: 15,
@@ -67,21 +70,16 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderRadius: 30,
     borderWidth: 1,
-  },
-  dateInput: {
-    padding: 10,
-    height: 50,
-    borderColor: 'gray',
-    borderRadius: 30,
-    borderWidth: 1,
-    alignItems: 'flex-start',
-  },
-  datePicker: {
-    marginBottom: 20,
-    width: undefined,
+    color: 'black',
   },
   container: {
     margin: 20,
+  },
+  containerText: {
+    marginLeft: 20,
+  },
+  map: {
+
   },
 });
 
