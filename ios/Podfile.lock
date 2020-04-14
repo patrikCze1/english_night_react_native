@@ -202,7 +202,7 @@ PODS:
     - FirebaseCoreDiagnosticsInterop (~> 1.0)
     - GoogleUtilities/Environment (~> 6.2)
     - GoogleUtilities/Logger (~> 6.2)
-  - FirebaseCoreDiagnostics (1.2.2):
+  - FirebaseCoreDiagnostics (1.2.3):
     - FirebaseCoreDiagnosticsInterop (~> 1.2)
     - GoogleDataTransportCCTSupport (~> 2.0)
     - GoogleUtilities/Environment (~> 6.5)
@@ -234,7 +234,7 @@ PODS:
     - Flipper-Folly (~> 2.1)
     - Flipper-RSocket (~> 1.0)
   - Flipper-DoubleConversion (1.1.7)
-  - Flipper-Folly (2.1.1):
+  - Flipper-Folly (2.2.0):
     - boost-for-react-native
     - CocoaLibEvent (~> 1.0)
     - Flipper-DoubleConversion
@@ -242,8 +242,8 @@ PODS:
     - OpenSSL-Universal (= 1.0.2.19)
   - Flipper-Glog (0.3.6)
   - Flipper-PeerTalk (0.0.4)
-  - Flipper-RSocket (1.0.0):
-    - Flipper-Folly (~> 2.0)
+  - Flipper-RSocket (1.1.0):
+    - Flipper-Folly (~> 2.2)
   - FlipperKit (0.33.1):
     - FlipperKit/Core (= 0.33.1)
   - FlipperKit/Core (0.33.1):
@@ -292,8 +292,8 @@ PODS:
     - GoogleUtilities/Network (~> 6.0)
     - "GoogleUtilities/NSData+zlib (~> 6.0)"
     - nanopb (= 0.3.9011)
-  - GoogleDataTransport (5.1.0)
-  - GoogleDataTransportCCTSupport (2.0.1):
+  - GoogleDataTransport (5.1.1)
+  - GoogleDataTransportCCTSupport (2.0.2):
     - GoogleDataTransport (~> 5.1)
     - nanopb (~> 0.3.901)
   - GoogleUtilities/AppDelegateSwizzler (6.5.2):
@@ -585,9 +585,13 @@ PODS:
     - RNFBApp
   - RNGestureHandler (1.6.1):
     - React
+  - RNKeychain (6.0.0):
+    - React
   - RNReanimated (1.7.1):
     - React
   - RNScreens (2.4.0):
+    - React
+  - TouchID (4.4.1):
     - React
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -634,8 +638,10 @@ DEPENDENCIES:
   - "RNFBFirestore (from `../node_modules/@react-native-firebase/firestore`)"
   - "RNFBStorage (from `../node_modules/@react-native-firebase/storage`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
+  - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - TouchID (from `../node_modules/react-native-touch-id`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -738,10 +744,14 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/storage"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
+  RNKeychain:
+    :path: "../node_modules/react-native-keychain"
   RNReanimated:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  TouchID:
+    :path: "../node_modules/react-native-touch-id"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -758,23 +768,23 @@ SPEC CHECKSUMS:
   FirebaseAnalytics: 45f36d9c429fc91d206283900ab75390cd05ee8a
   FirebaseAuthInterop: a0f37ae05833af156e72028f648d313f7e7592e9
   FirebaseCore: 307ea2508df730c5865334e41965bd9ea344b0e5
-  FirebaseCoreDiagnostics: e9b4cd8ba60dee0f2d13347332e4b7898cca5b61
+  FirebaseCoreDiagnostics: 13a6564cd6d5375066bbc8940cc1753af24497f3
   FirebaseCoreDiagnosticsInterop: 296e2c5f5314500a850ad0b83e9e7c10b011a850
   FirebaseFirestore: 52120e2833f804a874ba1a9f59aab864a8ae2286
   FirebaseInstanceID: ebd2ea79ee38db0cb5f5167b17a0d387e1cc7b6e
   FirebaseStorage: 93fe2f8190a01bfb2b2c4932df7d679744c4ef1d
   Flipper: 6c1f484f9a88d30ab3e272800d53688439e50f69
   Flipper-DoubleConversion: 38631e41ef4f9b12861c67d17cb5518d06badc41
-  Flipper-Folly: 2de3d03e0acc7064d5e4ed9f730e2f217486f162
+  Flipper-Folly: c12092ea368353b58e992843a990a3225d4533c3
   Flipper-Glog: 1dfd6abf1e922806c52ceb8701a3599a79a200a6
   Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
-  Flipper-RSocket: 1260a31c05c238eabfa9bb8a64e3983049048371
+  Flipper-RSocket: 64e7431a55835eb953b0bf984ef3b90ae9fdddd7
   FlipperKit: 6dc9b8f4ef60d9e5ded7f0264db299c91f18832e
   Folly: 30e7936e1c45c08d884aa59369ed951a8e68cf51
   glog: 1f3da668190260b06b429bb211bfbee5cd790c28
   GoogleAppMeasurement: dfe55efa543e899d906309eaaac6ca26d249862f
-  GoogleDataTransport: b29a21d813e906014ca16c00897827e40e4a24ab
-  GoogleDataTransportCCTSupport: 6f15a89b0ca35d6fa523e1f752ef818588885988
+  GoogleDataTransport: 6ffa4dd0b6d547f8d27b91bd92fa9e197a3f5f1f
+  GoogleDataTransportCCTSupport: 12f02e5c8f09c055615de90bcd5ba2c375546051
   GoogleUtilities: ad0f3b691c67909d03a3327cc205222ab8f42e0e
   "gRPC-C++": 9dfe7b44821e7b3e44aacad2af29d2c21f7cde83
   gRPC-Core: c9aef9a261a1247e881b18059b84d597293c9947
@@ -809,8 +819,10 @@ SPEC CHECKSUMS:
   RNFBFirestore: 69e59e5266927857fa3629715111ee65f4de1cd0
   RNFBStorage: 24097a1d18534b9c3559f862b8d18365cd573c2c
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
+  RNKeychain: bf2d7e9a0ae7a073c07770dd2aa6d11c67581733
   RNReanimated: 4e102df74a9674fa943e05f97f3362b6e44d0b48
   RNScreens: b5c0e1b2b04512919e78bd3898e144a157ce2363
+  TouchID: ba4c656d849cceabc2e4eef722dea5e55959ecf4
   Yoga: 9db9ff2025ad21d1ac0a8b3c85d5ac4e7c29d525
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

@@ -15,9 +15,11 @@ class NewGameScreen extends Component {
     name: '',
     date: '',
     time: '',
+    userId: '',
   };
 
   componentDidMount() {
+    this.setState({userId: this.props.route.params.userInfo.userId})
     this.props.navigation.setOptions({
       headerRight: () => (
         <Button
@@ -35,13 +37,16 @@ class NewGameScreen extends Component {
       const date = this.state.date.split('/');
       const hours = this.state.time.split(':');
       const time = new Date(date[2],date[1],date[0], hours[0],hours[1]);
-      this.props.route.params.saveGame(this.state.name, time.getTime());
+      let code = Math.floor(Math.random() * 100000);
+      code = code.toString();
+
+      this.props.route.params.saveGame(this.state.name, time.getTime(), code);
+      this.props.route.params.addCode(this.state.userId, code);
       this.props.navigation.goBack();
     }
   };
 
   render() {
-    console.log(new Date())
     return (
       <View style={styles.container}>
         <TextInput
@@ -106,7 +111,8 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
     borderRadius: 30,
     borderWidth: 1,
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
+    color: 'black',
   },
   datePicker: {
     marginBottom: 20,

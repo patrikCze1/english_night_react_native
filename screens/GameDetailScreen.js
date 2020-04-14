@@ -52,11 +52,11 @@ class GameDetailScreen extends Component {
       .then((res) => {
         this.setState({imageUrl: res});
         this.setState({loading: false});
-        console.log(res);
+        //console.log(res);
       })
       .catch((err) => {
         this.setState({loading: false});
-        console.log(err);
+        //console.log(err);
       });
   }
 
@@ -102,15 +102,6 @@ class GameDetailScreen extends Component {
     });
   }
 
-  async deleteGame () {
-    await firestore()
-    .collection('Games')
-    .doc(this.state.gameId)
-    .delete();
-    
-    this.props.navigation.goBack();
-  }
-
   render() {
     const {key} = this.props.route.params.game.item; //id
 
@@ -133,8 +124,7 @@ class GameDetailScreen extends Component {
           completeTask={this.completeTask}
           deleteTask={this.deleteTask}
         />
-        <Button title="Delete" color="#ff0000" titleStyle={styles.deleteBtn} onPress={this.deleteGame.bind(this)} />
-      </View>
+        </View>
     );
   }
 }

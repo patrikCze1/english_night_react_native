@@ -1,10 +1,4 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- *///quick time - sdileni mobilu
+//quick time - sdileni mobilu
 
 import 'react-native-gesture-handler'; // must be first
 import * as React from 'react';
@@ -18,24 +12,27 @@ import GameDetailScreen from './screens/GameDetailScreen';
 import TaskDetailScreen from './screens/TaskDetailScreen';
 import NewTaskScreen from './screens/NewTaskScreen';
 import NewGameScreen from './screens/NewGameScreen';
+import FingerPrint from './components/FingerPrint';
 
+import firebase from '@react-native-firebase/app';
 import firestore from '@react-native-firebase/firestore';
 
 const Stack = createStackNavigator();
 const tasksRef = firestore().collection('Tasks');
 const gamesRef = firestore().collection('Games');
+const usersRef = firestore().collection('Users');
 
 class App extends Component {
-  state = {
-    games: [],
-  }
 
-  async saveGame(name, date) {
+  async saveGame(name, date, code) {
     await gamesRef.add({
       name: name,
       image: '/games/default.jpg',
       date: date,
+      code: code,
     });
+
+    this.addCode(userId, code);
   }
   
   async saveTask(gameId, title, coordinates) {
@@ -47,34 +44,42 @@ class App extends Component {
     });
   }
 
+  async addCode(userId, code) {
+    console.log(userId)
+    await usersRef
+    .doc(userId)
+    .update(
+      { codes: firebase.firestore.FieldValue.arrayUnion(code) }
+    )
+    .then(success => console.log(success))
+    .catch(err => console.log(err));
+  }
+
+  async removeCode(userId, code) {
+    await usersRef
+    .doc(userId)
+    .update(
+      { codes: firebase.firestore.FieldValue.arrayRemove(code) }
+    );
+  }
+
   render() {
     return (
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Games">
+        <Stack.Navigator initialRouteName="Login">
+          <Stack.Screen 
+            name="Login" 
+            component={FingerPrint} 
+          />
           <Stack.Screen
             name="Games"
             component={GamesScreen}
-            initialParams={{games: this.state.games}}
-            options={({navigation}) => ({
-              title: 'Games',
-              headerLeft: () => (
-                <Button
-                  onPress={() => alert('profile')}
-                  title="Profile"
-                />
-              ),
-              headerRight: () => (
-                <Button
-                  onPress={() => navigation.navigate('NewGame')}
-                  title="New"
-                />
-              ),
-            })}
+            initialParams={{addCode: this.addCode}}
           />
           <Stack.Screen 
             name="NewGame" 
             component={NewGameScreen} 
-            initialParams={{saveGame: this.saveGame}}
+            initialParams={{saveGame: this.saveGame, addCode: this.addCode}}
             options={({navigation}) => ({
               title: 'New game',
               /*headerRight: () => (
@@ -85,7 +90,6 @@ class App extends Component {
           <Stack.Screen 
             name="GameDetail" 
             component={GameDetailScreen} 
-            initialParams={{tasks: this.state.tasks}}
           />
           <Stack.Screen 
             name="TaskDetail" 

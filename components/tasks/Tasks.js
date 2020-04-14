@@ -4,9 +4,9 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-  Text,
   TouchableHighlight,
   Image,
+  Text,
 } from 'react-native';
 import firestore from '@react-native-firebase/firestore';
 import {useNavigation} from '@react-navigation/native';
@@ -58,6 +58,10 @@ const Tasks = (props) => {
 
   if (loading) {
     return <ActivityIndicator />;
+  }
+
+  if (tasks.length === 0) {
+    return <Text style={styles.infoText}>No tasks, create one!</Text>
   }
 
   return (
@@ -129,6 +133,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 23,
     paddingVertical: 15,
   },
+  infoText: {
+    fontSize: 20,
+    textAlign: 'center',
+    paddingVertical: 15,
+  }
 });
 
 export default Tasks;
