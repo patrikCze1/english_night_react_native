@@ -6,6 +6,7 @@ import {
   FlatList,
   Button,
   TextInput,
+  Alert,
 } from 'react-native';
 import DatePicker from 'react-native-datepicker';
 
@@ -32,7 +33,13 @@ class NewGameScreen extends Component {
 
   onSubmit = () => {
     if (!this.state.name || !this.state.date) {
-      alert('Please fill all inputs.');
+      Alert.alert(
+        'Warning',
+        'Please fill all fields',
+        [
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ],
+      );
     } else {
       const date = this.state.date.split('/');
       const hours = this.state.time.split(':');

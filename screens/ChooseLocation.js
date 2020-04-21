@@ -46,6 +46,7 @@ class ChooseLocation extends Component {
         <MapView
           region={this.state.region}
           onRegionChangeComplete={region => this.setState({region})}
+          showsUserLocation={true}
           onPress={event => this.onPress(event)}
           style={{left: 0, right: 0, top: 0, bottom: 0, position: 'absolute'}}>
           <Marker

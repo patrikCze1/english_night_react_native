@@ -3,7 +3,6 @@
 import 'react-native-gesture-handler'; // must be first
 import * as React from 'react';
 import {Component} from 'react';
-import {StyleSheet, Button} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
@@ -12,7 +11,7 @@ import GameDetailScreen from './screens/GameDetailScreen';
 import TaskDetailScreen from './screens/TaskDetailScreen';
 import NewTaskScreen from './screens/NewTaskScreen';
 import NewGameScreen from './screens/NewGameScreen';
-import FingerPrint from './components/FingerPrint';
+import AuthScreen from './screens/AuthScreen';
 
 import firebase from '@react-native-firebase/app';
 import firestore from '@react-native-firebase/firestore';
@@ -45,22 +44,13 @@ class App extends Component {
   }
 
   async addCode(userId, code) {
-    console.log(userId)
     await usersRef
     .doc(userId)
     .update(
       { codes: firebase.firestore.FieldValue.arrayUnion(code) }
     )
-    .then(success => console.log(success))
+    .then(success => console.log('success'))
     .catch(err => console.log(err));
-  }
-
-  async removeCode(userId, code) {
-    await usersRef
-    .doc(userId)
-    .update(
-      { codes: firebase.firestore.FieldValue.arrayRemove(code) }
-    );
   }
 
   render() {
@@ -69,7 +59,7 @@ class App extends Component {
         <Stack.Navigator initialRouteName="Login">
           <Stack.Screen 
             name="Login" 
-            component={FingerPrint} 
+            component={AuthScreen}
           />
           <Stack.Screen
             name="Games"
@@ -82,9 +72,6 @@ class App extends Component {
             initialParams={{saveGame: this.saveGame, addCode: this.addCode}}
             options={({navigation}) => ({
               title: 'New game',
-              /*headerRight: () => (
-                <Button onPress={() => navigation.goBack()} title="Save" />
-              ),*/
             })}
           />
           <Stack.Screen 
@@ -109,21 +96,4 @@ class App extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  body: {
-
-  },
-  container: {
-    justifyContent: 'center',
-    alignContent: 'center',
-    margin: 15,
-    backgroundColor: 'red',
-  },
-  games: {
-    padding:0,
-  }
-});
-
 export default App;
-//todo map, foto,icons

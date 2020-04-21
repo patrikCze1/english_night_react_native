@@ -11,7 +11,7 @@ const TaskListItem = (props) => {
         <Text>
           {
           completed ? 
-          <Image source={require('./../../static/icons/check20.png')} style={styles.img}/> 
+          <Image source={require('./../../static/icons/check20.png')} /> 
           : 
           ''
           }
@@ -37,8 +37,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'flex-end',
   },
-  img: {
-  }
 });
 
 export default TaskListItem;

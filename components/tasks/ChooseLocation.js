@@ -45,7 +45,7 @@ class ChooseLocation extends Component {
 
 const styles = StyleSheet.create({
   map: {
-    height: screenHeight - 195,
+    height: screenHeight - 215,
     width: screenWidth,
     left: 0,
     right: 0,

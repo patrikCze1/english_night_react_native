@@ -13,20 +13,19 @@ import {useNavigation} from '@react-navigation/native';
 import {SwipeListView} from 'react-native-swipe-list-view';
 import TaskListItem from './TaskListItem';
 
-const Tasks = (props) => {
+const Tasks = props => {
   const [loading, setLoading] = useState(true);
   const [tasks, setTasks] = useState([]);
-
   const navigation = useNavigation();
 
   useEffect(() => {
     const subscriber = firestore()
       .collection('Tasks')
       .where('gameId', '==', props.gameId)
-      .onSnapshot((querySnapshot) => {
+      .onSnapshot(querySnapshot => {
         const tasks = [];
 
-        querySnapshot.forEach((documentSnapshot) => {
+        querySnapshot.forEach(documentSnapshot => {
           tasks.push({
             ...documentSnapshot.data(),
             key: documentSnapshot.id,
@@ -41,19 +40,33 @@ const Tasks = (props) => {
   }, []);
 
   async function toggleComplete(taskId, isCompleted) {
-    await firestore()
-      .collection('Tasks')
-      .doc(taskId)
-      .update({
-        completed: !isCompleted,
-      });
+    if (props.isActive) {
+      try {
+        await firestore()
+          .collection('Tasks')
+          .doc(taskId)
+          .update({
+            completed: !isCompleted,
+          });
+      } catch (error) {
+        console.log(error);
+      }
+      props.updateTasksNumber();
+    }
   }
 
   async function deleteTask(taskId) {
-    await firestore()
-      .collection('Tasks')
-      .doc(taskId)
-      .delete();
+    if (props.isActive) {
+      try {
+        await firestore()
+          .collection('Tasks')
+          .doc(taskId)
+          .delete();
+      } catch (error) {
+        console.log(error);
+      }
+      props.updateTasksNumber();
+    }
   }
 
   if (loading) {
@@ -61,12 +74,11 @@ const Tasks = (props) => {
   }
 
   if (tasks.length === 0) {
-    return <Text style={styles.infoText}>No tasks, create one!</Text>
+    return <Text style={styles.infoText}>No tasks, create one!</Text>;
   }
 
   return (
     <SwipeListView
-      style={styles.list}
       data={tasks}
       renderItem={(task, rowMap) => (
         <TouchableHighlight
@@ -76,24 +88,27 @@ const Tasks = (props) => {
           <TaskListItem task={task.item} />
         </TouchableHighlight>
       )}
-
       renderHiddenItem={(task, rowMap) => (
         <View style={styles.backRow}>
           <View style={{flexDirection: 'row', flexWrap: 'wrap'}}>
             <TouchableOpacity
               onPress={() => toggleComplete(task.item.key, task.item.completed)}
-              style={styles.btn}
-              >
+              style={styles.btn}>
               <View style={styles.complete}>
-                {task.item.completed ? <Image source={require('./../../static/icons/back32.png')} />  : <Image source={require('./../../static/icons/checkwhite24.png')} style={styles.img}/> }
+                {task.item.completed ? (
+                  <Image source={require('./../../static/icons/back32.png')} />
+                ) : (
+                  <Image
+                    source={require('./../../static/icons/checkwhite24.png')}
+                    style={styles.img}
+                  />
+                )}
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              onPress={() => deleteTask(task.item.key)}
-              >
+            <TouchableOpacity onPress={() => deleteTask(task.item.key)}>
               <View style={styles.delete}>
-                <Image source={require('./../../static/icons/trash32.png')}/> 
+                <Image source={require('./../../static/icons/trash32.png')} />
               </View>
             </TouchableOpacity>
           </View>
@@ -105,15 +120,12 @@ const Tasks = (props) => {
 };
 
 const styles = StyleSheet.create({
-  list: {
-    //height: 450,
-  },
   backRow: {
     alignItems: 'flex-end',
   },
   btn: {
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   complete: {
     fontSize: 16,
@@ -137,7 +149,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     textAlign: 'center',
     paddingVertical: 15,
-  }
+  },
 });
 
 export default Tasks;

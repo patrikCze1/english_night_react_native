@@ -7,8 +7,8 @@ class TaskDetailScreen extends Component {
     region: {
       latitude: this.props.route.params.coordinates.latitude,
       longitude: this.props.route.params.coordinates.longitude,
-      latitudeDelta: 0.0922,
-      longitudeDelta: 0.0421,
+      latitudeDelta: 0.05,
+      longitudeDelta: 0.02,
     },
     marker: 
       {

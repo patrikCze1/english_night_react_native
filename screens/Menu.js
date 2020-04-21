@@ -8,6 +8,7 @@ import {
   Image,
   Button,
   TextInput,
+  Alert,
 } from 'react-native';
 
 const window = Dimensions.get('window');
@@ -24,26 +25,30 @@ class Menu extends React.Component {
     this.setState({userId: this.props.userInfo.userId})
   }
 
-  onSubmit = () => {
-    if (this.state.code.length === 5) {
+  onSubmit = () => {//todo check id, max 10 kodu
+    if (this.state.code.length <= 5) {
       this.props.userInfo.codes.push(this.state.code);
-      console.log(this.props.userInfo.codes);
-      console.log("ok");
       this.props.addCode(this.state.userId, this.state.code);
       this.setState({code: ''});
     } else {
-      alert('error');
+      Alert.alert(
+        'Warning',
+        'Code can has max 5 characters',
+        [
+          {text: 'OK', onPress: () => console.log('OK Pressed')},
+        ],
+      );
     }
   }
 
   render() {
-    const {name} = this.props.userInfo;
-    console.log(this.props)
+    const {email} = this.props.userInfo;
+    
     return (
       <ScrollView scrollsToTop={false} style={styles.menu}>
         <View style={styles.avatarContainer}>
           <Image style={styles.avatar} source={{uri}} />
-          <Text style={styles.item}>{name}</Text>
+          <Text style={styles.item}>{email}</Text>
         </View>
 
         <View style={styles.container}>
