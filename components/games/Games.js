@@ -18,7 +18,6 @@ function Games(props) {
   const [loading, setLoading] = useState(true);
   const [games, setGames] = useState([]);
   const [codes, setCodes] = useState([]);
-  const gameRef = firestore().collection('Games');//zkusit s ref
 
   useEffect(() => {
     getCodes();
@@ -27,8 +26,7 @@ function Games(props) {
   useEffect(() => {
     if (codes.length > 0) {
       const subscriber = firestore().collection('Games')
-        .where('code', 'in', codes) //filter by user codes
-        //.orderBy('date')
+        .where('code', 'in', codes) 
         .onSnapshot(querySnapshot => {
         const games = [];
         
@@ -37,6 +35,10 @@ function Games(props) {
               ...documentSnapshot.data(),
               key: documentSnapshot.id,
             });
+          });
+          
+          games.sort((a, b) => {
+            return new Date(b.date) - new Date(a.date);
           });
           setLoading(false);
           setGames(games);
@@ -58,7 +60,7 @@ function Games(props) {
       });
   }
 
-  async function deleteGame(gameId, code) {
+  async function deleteGame(gameId, code) {// admin
     console.log('deleting' + gameId);
     const storage = firebase.storage();
     const storageRef = storage.ref();
@@ -120,7 +122,7 @@ function Games(props) {
     <SwipeListView
       data={games}
       renderItem={(game, rowMap) => (
-        <View style={{height: 92}}>
+        <View style={{ height: 90 }}>
           <GameListItem {...game} />
         </View>
       )}
@@ -134,7 +136,7 @@ function Games(props) {
             </TouchableOpacity>
 
             <TouchableOpacity
-              onPress={() => deleteGame(game.item.key, game.item.code)}>
+              onPress={() => removeCode(game.item.code)}>
               <View style={styles.delete}>
                 <Image source={require('./../../static/icons/trash32.png')} />
               </View>
@@ -161,14 +163,14 @@ const styles = StyleSheet.create({
     backgroundColor: '#48adfa',
     color: 'white',
     width: 80,
-    height: '98%',
+    height: '100%',
     textAlign: 'center',
     paddingVertical: 30,
   },
   delete: {
     backgroundColor: '#ff362b',
     width: 80,
-    height: '99%',
+    height: '100%',
     paddingHorizontal: 23,
     paddingVertical: 25,
   },

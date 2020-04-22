@@ -1,14 +1,7 @@
 import React, {Component} from 'react';
-import {
-  StyleSheet,
-  View,
-  Text,
-  FlatList,
-  Button,
-  TextInput,
-  Alert,
-} from 'react-native';
+import {StyleSheet, View, Button, TextInput, Alert} from 'react-native';
 import DatePicker from 'react-native-datepicker';
+import firestore from '@react-native-firebase/firestore';
 
 class NewGameScreen extends Component {
   date = new Date();
@@ -17,41 +10,54 @@ class NewGameScreen extends Component {
     date: '',
     time: '',
     userId: '',
+    numberOfCodes: 0,
   };
 
   componentDidMount() {
-    this.setState({userId: this.props.route.params.userInfo.userId})
+    this.setState({userId: this.props.route.params.userInfo.userId});
     this.props.navigation.setOptions({
-      headerRight: () => (
-        <Button
-          onPress={this.onSubmit}
-          title="Save"
-        />
-      ),
-    })
+      headerRight: () => <Button onPress={this.onSubmit} title="Save" />,
+    });
+    this.getNumberOfCodes(this.props.route.params.userInfo.userId);
+    console.log(this.props.route.params)
   }
 
   onSubmit = () => {
-    if (!this.state.name || !this.state.date) {
-      Alert.alert(
-        'Warning',
-        'Please fill all fields',
-        [
+    console.log(this.state.numberOfCodes)
+    if (this.state.numberOfCodes < 10) {
+      if (!this.state.name || !this.state.date) {
+        Alert.alert('Error', 'Please fill all fields', [
           {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ],
-      );
-    } else {
-      const date = this.state.date.split('/');
-      const hours = this.state.time.split(':');
-      const time = new Date(date[2],date[1],date[0], hours[0],hours[1]);
-      let code = Math.floor(Math.random() * 100000);
-      code = code.toString();
+        ]);
+      } else {
+        const date = this.state.date.split('/');
+        const hours = this.state.time.split(':');
+        console.log(hours);
+        const time = new Date(date[2], date[1], date[0], hours[0], hours[1]);
+        let code = Math.floor(Math.random() * 100000);
+        code = code.toString();
 
-      this.props.route.params.saveGame(this.state.name, time.getTime(), code);
-      this.props.route.params.addCode(this.state.userId, code);
-      this.props.navigation.goBack();
+        this.props.route.params.saveGame(this.state.name, time.getTime(), code);
+        this.props.route.params.addCode(this.state.userId, code);
+        this.props.navigation.goBack();
+      }
+    } else {
+      Alert.alert('Warning', 'Maximum number of codes is 10', [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
     }
   };
+
+  async getNumberOfCodes(userId) {
+    await firestore()
+      .collection('Users')
+      .doc(userId)
+      .get()
+      .then(res => {
+        console.log(res)
+        this.setState({numberOfCodes: res._data.codes.length});
+      });
+  }
 
   render() {
     return (
@@ -87,7 +93,7 @@ class NewGameScreen extends Component {
           date={this.state.time}
           mode="time"
           placeholder="Select time"
-          format="HH:MM"
+          format="HH:mm"
           confirmBtnText="Confirm"
           cancelBtnText="Cancel"
           showIcon={false}

@@ -10,6 +10,7 @@ import {
   TextInput,
   Alert,
 } from 'react-native';
+import firestore from '@react-native-firebase/firestore';
 
 const window = Dimensions.get('window');
 const uri =
@@ -19,31 +20,45 @@ class Menu extends React.Component {
   state = {
     code: '',
     userId: '',
+    numberOfCodes: 0,
   };
 
   componentDidMount() {
-    this.setState({userId: this.props.userInfo.userId})
+    this.setState({userId: this.props.userInfo.userId});
+    this.getCodes(this.props.userInfo.userId);
   }
 
-  onSubmit = () => {//todo check id, max 10 kodu
-    if (this.state.code.length <= 5) {
-      this.props.userInfo.codes.push(this.state.code);
-      this.props.addCode(this.state.userId, this.state.code);
-      this.setState({code: ''});
-    } else {
-      Alert.alert(
-        'Warning',
-        'Code can has max 5 characters',
-        [
+  onSubmit = () => {
+    if (this.state.numberOfCodes < 10) {
+      if (this.state.code.length <= 5) {
+        this.props.userInfo.codes.push(this.state.code);
+        this.props.addCode(this.state.userId, this.state.code);
+        this.setState({code: ''});
+      } else {
+        Alert.alert('Warning', 'Code can has max 5 characters', [
           {text: 'OK', onPress: () => console.log('OK Pressed')},
-        ],
-      );
+        ]);
+      }
+    } else {
+      Alert.alert('Warning', 'Maximum number of codes is 10', [
+        {text: 'OK', onPress: () => console.log('OK Pressed')},
+      ]);
     }
+  };
+
+  async getCodes(userId) {
+    await firestore()
+      .collection('Users')
+      .doc(userId)
+      .get()
+      .then(res => {
+        this.setState({numberOfCodes: res._data.codes.length});
+      });
   }
 
   render() {
     const {email} = this.props.userInfo;
-    
+
     return (
       <ScrollView scrollsToTop={false} style={styles.menu}>
         <View style={styles.avatarContainer}>

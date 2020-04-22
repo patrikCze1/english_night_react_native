@@ -51,7 +51,6 @@ const Tasks = props => {
       } catch (error) {
         console.log(error);
       }
-      props.updateTasksNumber();
     }
   }
 
@@ -65,7 +64,6 @@ const Tasks = props => {
       } catch (error) {
         console.log(error);
       }
-      props.updateTasksNumber();
     }
   }
 

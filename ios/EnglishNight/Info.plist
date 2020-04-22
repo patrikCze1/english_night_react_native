@@ -42,7 +42,9 @@
 	<key>NSFaceIDUsageDescription</key>
 	<string>Enabling Face ID allows you quick and secure access to your account.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string></string>
+	<string>Enable use your location for better game experience</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>Enable use your location for better game experience</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>EnglishNight app want to your microphone.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>

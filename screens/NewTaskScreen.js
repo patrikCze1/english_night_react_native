@@ -7,9 +7,9 @@ class NewTaskScreen extends Component {
     title: '',
     position: {
       coordinate: {
-        latitude: 50.208709,
-        longitude: 15.832883,
-        latitudeDelta: 0.05,
+        latitude: 0,
+        longitude: 0,
+        latitudeDelta: 0.04,
         longitudeDelta: 0.02,
       },
     },
@@ -19,25 +19,6 @@ class NewTaskScreen extends Component {
     this.props.navigation.setOptions({
       headerRight: () => <Button onPress={this.onSubmit} title="Save" />,
     });
-    console.log(navigator);
-    /*
-    navigator.geolocation.watchPosition(
-      position => {
-        console.log('wokeeey');
-        console.log(position);
-        this.setState({
-          position: {
-            coordinate: {
-              latitude: position.coords.latitude,
-              longitude: position.coords.longitude,
-            },
-          },
-        });
-        //TODO: send user location to server
-      },
-      error => this.setState({error: error.message}),
-      {enableHighAccuracy: false, timeout: 200000, maximumAge: 1000},
-    );*/
   }
 
   onSubmit = () => {

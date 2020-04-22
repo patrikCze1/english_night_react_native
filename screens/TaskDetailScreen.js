@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {StyleSheet, View} from 'react-native';
+import { View } from 'react-native';
 import MapView, {Marker} from 'react-native-maps';
 
 class TaskDetailScreen extends Component {
@@ -7,7 +7,7 @@ class TaskDetailScreen extends Component {
     region: {
       latitude: this.props.route.params.coordinates.latitude,
       longitude: this.props.route.params.coordinates.longitude,
-      latitudeDelta: 0.05,
+      latitudeDelta: 0.04,
       longitudeDelta: 0.02,
     },
     marker: 
@@ -19,12 +19,7 @@ class TaskDetailScreen extends Component {
       },
   };
 
-  componentDidMount() {
-      console.log(this.state.marker)
-  }
-
   render() {
-    console.log(this.state.marker)
     return (
       <View style={{position: 'relative', flex: 1,}}>
         <MapView
@@ -41,15 +36,5 @@ class TaskDetailScreen extends Component {
     );
   }
 }
-
-const styles = StyleSheet.create({
-  map: {
-    ...StyleSheet.absoluteFillObject,
-    height: 400,
-    width: 400,
-    justifyContent: 'flex-end',
-    alignItems: 'center',
-  },
-});
 
 export default TaskDetailScreen;

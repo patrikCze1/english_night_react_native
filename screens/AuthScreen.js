@@ -59,26 +59,7 @@ export default function AuthScreen() {
   async function authWithTouchId() {
     const credentials = await Keychain.getGenericPassword();
 
-    const userInfo = await loadUserInfo(
-      credentials.username,
-      credentials.password,
-    ).then(userInfo => {
-      if (userInfo) {
-        return {
-          userId: userInfo.userId,
-          email: userInfo.email,
-          codes: userInfo.codes,
-        };
-      } else {
-        return null;
-      }
-    });
-    console.log(userInfo);
-    const optionalConfigObject = {
-      fallbackLabel: 'Show Passcode', // iOS (if empty, then label is hidden)
-      //passcodeFallback: true,
-    };
-    console.log('77 ', credentials);
+    const optionalConfigObject = {};
 
     if (!idShowed) {
       TouchID.authenticate(
@@ -89,7 +70,6 @@ export default function AuthScreen() {
           setEmail(credentials.username);
           setPassword(credentials.password);
           checkUserCred(credentials.username, credentials.password);
-          //navigation.navigate('Games', {userInfo});
         })
         .catch(error => {
           console.log(error);
@@ -101,8 +81,6 @@ export default function AuthScreen() {
 
   async function loadUserInfo(loginEmail = email, loginPass = password) {
     const lowerEmail = loginEmail.toLowerCase();
-    console.log('lowerEmail',lowerEmail);
-    console.log('loginPass', loginPass); //nic
 
     const res = await firestore()
       .collection('Users')
@@ -154,8 +132,7 @@ export default function AuthScreen() {
       auth()
         .createUserWithEmailAndPassword(loginEmail, password)
         .then(() => {
-          console.log('User account created & signed in!');
-          createNewUser();
+          createNewUser(); //in firestore
           setUserCredentials(loginEmail);
           login();
         })
@@ -190,18 +167,8 @@ export default function AuthScreen() {
         codes: [],
       });
   }
-
-  async function successLogin() {
-    await loadUserInfo()
-      .then(userInfo => {
-        console.log(userInfo);
-        navigation.navigate('Games', {userInfo});
-      })
-      .catch(console.log);
-  }
-
+  //save in kaychain
   async function setUserCredentials(userEmail, userPass = password) {
-    console.log('setting creditials ' + userEmail + ' ' + userPass);
     await Keychain.setGenericPassword(userEmail, userPass);
   }
 
@@ -236,6 +203,7 @@ export default function AuthScreen() {
         />
 
         <Button title="Login" onPress={() => checkUserCred()} />
+        <Text style={{textAlign: 'center'}}>or</Text>
         <Button title="Register" onPress={() => register()} />
       </View>
 

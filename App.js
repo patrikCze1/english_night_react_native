@@ -2,7 +2,7 @@
 
 import 'react-native-gesture-handler'; // must be first
 import * as React from 'react';
-import {Component} from 'react';
+import {Component, Alert} from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 
@@ -22,7 +22,6 @@ const gamesRef = firestore().collection('Games');
 const usersRef = firestore().collection('Users');
 
 class App extends Component {
-
   async saveGame(name, date, code) {
     await gamesRef.add({
       name: name,
@@ -33,59 +32,55 @@ class App extends Component {
 
     this.addCode(userId, code);
   }
-  
+
   async saveTask(gameId, title, coordinates) {
     await tasksRef.add({
       gameId: gameId,
       title: title,
       position: coordinates.coordinate,
-      completed: false
+      completed: false,
     });
   }
 
   async addCode(userId, code) {
-    await usersRef
-    .doc(userId)
-    .update(
-      { codes: firebase.firestore.FieldValue.arrayUnion(code) }
-    )
-    .then(success => console.log('success'))
-    .catch(err => console.log(err));
+    const games = await gamesRef.where('code', '==', code).get();
+    
+    if (games.docs[0]) {
+      await usersRef
+        .doc(userId)
+        .update({codes: firebase.firestore.FieldValue.arrayUnion(code)})
+        .then(success => console.log('success'))
+        .catch(err => console.log(err));
+    } 
   }
 
   render() {
     return (
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login">
-          <Stack.Screen 
-            name="Login" 
-            component={AuthScreen}
-          />
+          <Stack.Screen name="Login" component={AuthScreen} />
           <Stack.Screen
             name="Games"
             component={GamesScreen}
             initialParams={{addCode: this.addCode}}
           />
-          <Stack.Screen 
-            name="NewGame" 
-            component={NewGameScreen} 
+          <Stack.Screen
+            name="NewGame"
+            component={NewGameScreen}
             initialParams={{saveGame: this.saveGame, addCode: this.addCode}}
             options={({navigation}) => ({
               title: 'New game',
             })}
           />
-          <Stack.Screen 
-            name="GameDetail" 
-            component={GameDetailScreen} 
-          />
-          <Stack.Screen 
-            name="TaskDetail" 
-            component={TaskDetailScreen} 
+          <Stack.Screen name="GameDetail" component={GameDetailScreen} />
+          <Stack.Screen
+            name="TaskDetail"
+            component={TaskDetailScreen}
             options={{title: 'Task location'}}
           />
-          <Stack.Screen 
-            name="NewTask" 
-            component={NewTaskScreen} 
+          <Stack.Screen
+            name="NewTask"
+            component={NewTaskScreen}
             initialParams={{saveTask: this.saveTask}}
             options={{
               title: 'New task',

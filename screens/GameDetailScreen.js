@@ -30,6 +30,7 @@ class GameDetailScreen extends Component {
     const today = new Date();
 
     if (
+      today.getFullYear() < date.getFullYear() ||
       today.getFullYear() <= date.getFullYear() &&
       today.getMonth() + 1 <= date.getMonth() &&
       today.getDate() <= date.getDate()
@@ -115,7 +116,6 @@ class GameDetailScreen extends Component {
   };
 
   async saveImage(path) {
-    //todo zmensit
     const gameId = this.state.gameId;
     const newPath = '/games/' + gameId + '.jpg';
     console.log('new path: ' + newPath);
@@ -135,7 +135,7 @@ class GameDetailScreen extends Component {
 
   render() {
     const {key} = this.props.route.params.game.item; //id
-    //console.log(this.state);
+    
     return (
       <View>
         {this.state.loading ? (
@@ -152,16 +152,13 @@ class GameDetailScreen extends Component {
           <Tasks
           gameId={key}
           isActive={this.state.isActive}
-          //completeTask={this.completeTask}
-          //deleteTask={this.deleteTask}
-          updateTasksNumber={this.props.route.params.updateTasksNumber}
         />
         </View>
       </View>
     );
   }
 }
-//todo list zobrazeni az dolu
+
 const styles = StyleSheet.create({
   list: {
     height: window.height-390,
@@ -169,4 +166,3 @@ const styles = StyleSheet.create({
 });
 
 export default GameDetailScreen;
-//todo - tab - fotky/hraci

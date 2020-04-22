@@ -18,7 +18,6 @@ const GameListItem = props => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    console.log('useEffect...');
     const subscriber = firestore()
       .collection('Tasks')
       .where('gameId', '==', key)
@@ -39,10 +38,6 @@ const GameListItem = props => {
       });
     return () => subscriber();
   }, []);
-/*
-  function updateTasksNumber() {
-    console.log('updating...');
-  }*/
 
   if (loading) {
     return <ActivityIndicator />;
@@ -53,7 +48,6 @@ const GameListItem = props => {
       onPress={() =>
         navigation.navigate('GameDetail', {
           game: props,
-          updateTasksNumber: updateTasksNumber(),
         })
       }>
       <View style={upcomming ? styles.item : styles.inactive}>
@@ -82,9 +76,10 @@ const GameListItem = props => {
 isGameUpcomming = timestamp => {
   const date = new Date(timestamp);
   const today = new Date();
-
+  
   if (
-    today.getFullYear() <= date.getFullYear() &&
+    today.getFullYear() < date.getFullYear() ||
+    today.getFullYear() === date.getFullYear() &&
     today.getMonth() + 1 <= date.getMonth() &&
     today.getDate() <= date.getDate()
   ) {
@@ -127,7 +122,7 @@ const styles = StyleSheet.create({
     padding: 20,
     backgroundColor: '#ffffff',
     borderBottomColor: '#4d4d4d',
-    borderBottomWidth: 0.5,
+    borderBottomWidth: 0.8,
   },
   inactive: {
     padding: 20,
